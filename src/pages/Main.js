@@ -24,7 +24,11 @@ export default function Main({ match }) {
   }, [match.params.id]);
 
   async function handleLike(id) {
-    await api.post(`/devs/${id}/likes`);
+    await api.post(`/devs/${id}/likes`, null, {
+      headers: { user: match.params.id },
+    });
+
+    setUsers(users.filter(user => user._id !== id));
   }
 
   async function handleDislike(id) {
@@ -38,8 +42,9 @@ export default function Main({ match }) {
   return (
     <div className="main-container">
       <img src={logo} alt="Tindev" />
-      <ul>
-        { users.map(user => (
+        {users.length > 0 ? (          
+          <ul>
+            { users.map(user => (
           <li key={user._id}>          
             <img src={user.avatar} alt={user.name}/>
             <footer>
@@ -56,8 +61,11 @@ export default function Main({ match }) {
               </button>
             </div>
           </li>
-        ))}         
-      </ul>
+        ))}     
+          </ul>
+        ) : (
+          <div className="empty">Acabou :(</div>
+        )}
     </div>
   );
 }
