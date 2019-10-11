@@ -21,7 +21,19 @@ export default function Main({ match }) {
       setUsers(response.data);
     } 
     loadUsers();
-  }, [match.params.id])
+  }, [match.params.id]);
+
+  async function handleLike(id) {
+    await api.post(`/devs/${id}/likes`);
+  }
+
+  async function handleDislike(id) {
+    await api.post(`/devs/${id}/dislikes`, null, {
+      headers: { user: match.params.id },
+    });
+
+    setUsers(users.filter(user => user._id !== id));
+  }
 
   return (
     <div className="main-container">
@@ -36,10 +48,10 @@ export default function Main({ match }) {
             </footer>
 
             <div className="buttons">
-              <button type="button">
+              <button type="button" onClick={() => handleDislike(user._id)}>
                 <img src={dislike} alt="dislike"/>
               </button>
-              <button type="button">
+              <button type="button" onClick={() => handleLike(user._id)}>
                 <img src={like} alt="like"/>              
               </button>
             </div>
